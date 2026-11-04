@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#a42a1d">
+  <title>DOG-O-VISION · 狗狗映像管電視</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c93b2c'/%3E%3Ccircle cx='11' cy='14' r='3' fill='%23ffeecd'/%3E%3Ccircle cx='21' cy='14' r='3' fill='%23ffeecd'/%3E%3Cellipse cx='16' cy='21' rx='6' ry='4.5' fill='%23ffeecd'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/tv.css">
+</head>
+<body class="tv-page">
+  <!-- 手繪鉛筆抖動濾鏡：供 CSS filter: url(#...) 使用 -->
+  <svg class="svg-filters" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="pencilWobble" x="-6%" y="-6%" width="112%" height="112%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.024" numOctaves="3" seed="7" result="wobbleNoise"></feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="wobbleNoise" scale="3.6" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+      </filter>
+      <filter id="pencilWobbleStrong" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.017" numOctaves="3" seed="19" result="wobbleNoiseStrong"></feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="wobbleNoiseStrong" scale="7" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+      </filter>
+    </defs>
+  </svg>
+
+  <main class="tv" id="tv" data-power="on">
+    <div class="tv__cabinet">
+      <!-- 鉛筆描邊層 -->
+      <div class="tv__stroke tv__stroke--inner" aria-hidden="true"></div>
+      <div class="tv__stroke tv__stroke--outer" aria-hidden="true"></div>
+      <div class="tv__stroke tv__stroke--mid" aria-hidden="true"></div>
+
+      <header class="tv__brandbar">
+        <p class="tv__brand">
+          <span class="tv__brand-main">DOG-O-VISION</span>
+          <span class="tv__brand-sub">MODEL 1974 · SOLID STATE COLOR</span>
+        </p>
+        <p class="tv__sticker">good boy</p>
+      </header>
+
+      <div class="tv__body">
+        <div class="tv__side" aria-hidden="true">
+          <span class="tv__speaker"></span>
+          <span class="tv__side-label">HIGH FIDELITY</span>
+        </div>
+
+        <section class="screen" id="screen" aria-label="狗狗畫面">
+          <div class="screen__bezel">
+            <div class="screen__frame">
+              <div class="screen__tube" id="tube">
+                <div class="screen__contents" id="contents">
+                  <img class="screen__image" id="photo" alt="" decoding="async">
+                  <div class="screen__glow" aria-hidden="true"></div>
+                  <div class="screen__scanlines" aria-hidden="true"></div>
+                  <div class="screen__noise" aria-hidden="true"></div>
+                  <div class="screen__roll" aria-hidden="true"></div>
+                  <div class="screen__flash" aria-hidden="true"></div>
+                  <div class="screen__osd">
+                    <p class="screen__osd-channel" id="channel">CH --</p>
+                    <p class="screen__osd-status" id="status" role="status" aria-live="polite">NO SIGNAL</p>
+                  </div>
+                </div>
+              </div>
+              <div class="screen__glass" aria-hidden="true"></div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="tv__panel" aria-label="電視控制面板">
+          <div class="panel__group panel__group--power">
+            <button class="key key--power button" id="powerBtn" type="button" aria-pressed="true">
+              <span class="key__icon" aria-hidden="true"></span>
+              <span class="key__text">電源</span>
+            </button>
+            <p class="deck__led" id="led" data-state="on">
+              <span class="deck__led-dot" aria-hidden="true"></span>
+              <span class="deck__led-text">POWER</span>
+            </p>
+          </div>
+
+          <div class="panel__group panel__group--knobs" aria-hidden="true">
+            <div class="knobs">
+              <div class="knob">
+                <span class="knob__cap"></span>
+                <span class="knob__label">BRIGHT</span>
+              </div>
+              <div class="knob">
+                <span class="knob__cap"></span>
+                <span class="knob__label">V-HOLD</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel__group panel__group--channel">
+            <button class="key key--chan button" id="prevBtn" type="button">
+              <span class="key__arrow" aria-hidden="true">◀</span>
+              <span class="key__text">上一張</span>
+            </button>
+            <button class="key key--chan button" id="nextBtn" type="button">
+              <span class="key__text">下一張</span>
+              <span class="key__arrow" aria-hidden="true">▶</span>
+            </button>
+          </div>
+        </aside>
+      </div>
+
+      <footer class="tv__footer">
+        <span class="tv__vent" aria-hidden="true"></span>
+        <span class="tv__hint">← → 切換照片 · 空白鍵開關電視</span>
+        <span class="tv__serial" aria-hidden="true">NO.1974-0803</span>
+      </footer>
+    </div>
+  </main>
+
+  <noscript>
+    <p class="app-notice">這個頻道需要 JavaScript 才能換台，請開啟後重新整理頁面。</p>
+  </noscript>
+
+  <script src="js/common.js"></script>
+  <script src="js/tv.js"></script>
+</body>
+</html>

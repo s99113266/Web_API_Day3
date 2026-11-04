@@ -1,0 +1,949 @@
+/* ============================================================
+   tv.css — 狗狗映像管電視專用樣式（僅 index.html 使用）
+   共用樣式請放 css/common.css
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   0. 本頁專用色票（機身紅、映像管色）
+   ------------------------------------------------------------ */
+:root {
+  /* 70-80 年代電視紅 */
+  --red: #c93b2c;
+  --red-light: #e2593f;
+  --red-dark: #9d2a1c;
+  --red-deep: #6f1a11;
+
+  /* 映像管 */
+  --screen-black: #050605;
+  --phosphor: #c9ffb2;
+  --amber: #ffb347;
+}
+
+/* ------------------------------------------------------------
+   1. 頁面與滿版機身
+   機身用 fixed inset:0 鋪滿整個視窗，畫面不出現留白背景
+   ------------------------------------------------------------ */
+.tv-page {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: #2a0b08;
+}
+
+/* 收納 SVG 濾鏡，不佔版面 */
+.svg-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.tv {
+  position: fixed;
+  inset: 0;
+  display: flex;
+}
+
+.tv__cabinet {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 1.4vmin, 20px);
+  padding: clamp(10px, 2.4vmin, 32px) clamp(10px, 2.6vmin, 44px);
+  border-radius: clamp(0px, 1.2vmin, 16px);
+  overflow: hidden;
+  isolation: isolate;
+  background-color: var(--red);
+  background-image:
+    radial-gradient(150% 110% at 18% -25%, rgba(255, 255, 255, .35), rgba(255, 255, 255, 0) 52%),
+    radial-gradient(120% 90% at 100% 115%, rgba(0, 0, 0, .42), transparent 62%),
+    repeating-linear-gradient(102deg, rgba(255, 255, 255, .075) 0 2px, transparent 2px 9px),
+    repeating-linear-gradient(76deg, rgba(43, 26, 18, .09) 0 1px, transparent 1px 11px),
+    linear-gradient(158deg, var(--red-light) 0%, var(--red) 36%, var(--red-dark) 74%, var(--red-deep) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, .35),
+    inset 0 0 140px rgba(0, 0, 0, .45);
+}
+
+/* 紙張顆粒（讓紅色機身像塗鴉紙上的麥克筆） */
+.tv__cabinet::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: var(--texture-grain);
+  background-size: 180px 180px;
+  opacity: .16;
+  mix-blend-mode: multiply;
+}
+
+/* 機身四角暗角，滿版仍有厚度 */
+.tv__cabinet::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 90px rgba(43, 26, 18, .55),
+    inset 0 -40px 60px rgba(43, 26, 18, .35);
+}
+
+/* ---------- 鉛筆描邊（塗鴉感） ---------- */
+.tv__stroke {
+  position: absolute;
+  z-index: 6;
+  pointer-events: none;
+  border: 2px solid var(--ink-soft);
+  border-radius: var(--radius-hand);
+  filter: url(#pencilWobble);
+}
+
+.tv__stroke--outer {
+  inset: 7px;
+  border-width: 4px;
+  border-color: var(--ink);
+  opacity: .9;
+  transform: rotate(.12deg);
+}
+
+/* 手繪草稿常見的雙線：外框再補一條偏移細線 */
+.tv__stroke--outer::before {
+  content: "";
+  position: absolute;
+  inset: -4px -2px -2px -4px;
+  border: 1px solid rgba(43, 26, 18, .45);
+  border-radius: inherit;
+}
+
+.tv__stroke--mid {
+  inset: 16px;
+  border-width: 2px;
+  opacity: .58;
+  border-radius: 22px 30px 18px 34px / 28px 20px 32px 22px;
+  transform: rotate(-.14deg);
+  filter: url(#pencilWobbleStrong);
+}
+
+.tv__stroke--inner {
+  inset: 2px;
+  border-width: 1px;
+  opacity: .35;
+  filter: none;
+}
+
+/* ------------------------------------------------------------
+   2. 品牌列 / 頁尾
+   ------------------------------------------------------------ */
+.tv__brandbar {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding-inline: clamp(4px, 1.4vmin, 18px);
+  color: var(--cream);
+}
+
+.tv__brand {
+  display: flex;
+  flex-direction: column;
+  gap: .25em;
+  text-shadow: 2px 2px 0 rgba(43, 26, 18, .75);
+}
+
+.tv__brand-main {
+  font-family: var(--font-hardware);
+  font-size: clamp(13px, 2.2vmin, 30px);
+  letter-spacing: .16em;
+  line-height: 1;
+}
+
+.tv__brand-sub {
+  font-family: var(--font-osd);
+  font-size: clamp(7px, 1.05vmin, 12px);
+  letter-spacing: .34em;
+  opacity: .75;
+}
+
+.tv__sticker {
+  padding: .35em .9em;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: clamp(8px, 1.1vmin, 13px);
+  letter-spacing: .08em;
+  box-shadow: 2px 3px 0 rgba(43, 26, 18, .35);
+  transform: rotate(-3.5deg);
+}
+
+.tv__footer {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-inline: clamp(4px, 1.4vmin, 18px);
+  font-family: var(--font-osd);
+  font-size: clamp(7px, .95vmin, 11px);
+  letter-spacing: .18em;
+  color: rgba(255, 238, 205, .62);
+}
+
+.tv__vent {
+  flex: 1 1 auto;
+  height: 8px;
+  border-radius: 2px;
+  background-image: repeating-linear-gradient(to right, rgba(43, 26, 18, .6) 0 6px, transparent 6px 14px);
+  opacity: .7;
+}
+
+.tv__hint,
+.tv__serial {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------
+   3. 主體配置：左側喇叭 / 中間螢幕 / 右側控制面板
+   ------------------------------------------------------------ */
+.tv__body {
+  position: relative;
+  z-index: 3;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  gap: clamp(8px, 1.6vmin, 26px);
+}
+
+.tv__side {
+  flex: 0 0 clamp(46px, 6.5vw, 128px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(8px, 1.5vmin, 18px);
+  padding: clamp(8px, 1.6vmin, 20px) 0;
+}
+
+.tv__speaker {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 60px;
+  border: 3px solid var(--ink);
+  border-radius: var(--radius-hand);
+  background-color: rgba(255, 236, 205, .34);
+  background-image: radial-gradient(circle, rgba(43, 26, 18, .78) 1.3px, transparent 1.7px);
+  background-size: 9px 9px;
+  box-shadow: inset 0 0 14px rgba(43, 26, 18, .35);
+}
+
+.tv__side-label {
+  font-family: var(--font-osd);
+  font-size: clamp(7px, .95vmin, 11px);
+  letter-spacing: .3em;
+  color: rgba(255, 238, 205, .72);
+  writing-mode: vertical-rl;
+}
+
+/* ------------------------------------------------------------
+   4. 映像管螢幕
+   ------------------------------------------------------------ */
+.screen {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+}
+
+.screen__bezel {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  padding: clamp(8px, 1.9vmin, 28px);
+  border-radius: 34px 44px 30px 48px / 42px 32px 46px 30px;
+  background-image:
+    radial-gradient(120% 90% at 30% -30%, rgba(255, 255, 255, .16), transparent 55%),
+    linear-gradient(160deg, #4a3222 0%, #271710 55%, #150c08 100%);
+  box-shadow:
+    inset 0 0 0 2px rgba(0, 0, 0, .65),
+    inset 0 14px 28px rgba(0, 0, 0, .75),
+    0 0 0 3px rgba(43, 26, 18, .65),
+    0 10px 26px rgba(0, 0, 0, .45);
+}
+
+/* 螢幕內圈手繪線 */
+.screen__bezel::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  z-index: 3;
+  pointer-events: none;
+  border: 2px solid rgba(255, 236, 205, .2);
+  border-radius: 30px 40px 26px 44px / 38px 28px 42px 26px;
+  filter: url(#pencilWobble);
+}
+
+/* 玻璃（永遠存在，關機時看得到反光） */
+.screen__frame {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 22px 30px 20px 34px / 28px 22px 32px 20px;
+  background: var(--screen-black);
+  box-shadow:
+    inset 0 0 0 2px rgba(0, 0, 0, .9),
+    inset 0 0 60px rgba(0, 0, 0, .95),
+    inset 0 0 160px rgba(0, 0, 0, .8);
+}
+
+/* 映像管邊緣暗角 */
+.screen__frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(112% 92% at 50% 46%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, .45) 84%, rgba(0, 0, 0, .78) 100%);
+  opacity: .92;
+}
+
+/* 玻璃反光 */
+.screen__glass {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, .14) 0 10%, rgba(255, 255, 255, .04) 20%, transparent 40%),
+    radial-gradient(60% 40% at 78% 88%, rgba(255, 236, 205, .07), transparent 70%);
+  mix-blend-mode: screen;
+}
+
+/* 可視區收縮的圖層：只做 clip-path 裁切，絕不 scale 圖片 */
+.screen__tube {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  clip-path: inset(0 round 24px);
+}
+
+.screen__contents {
+  position: absolute;
+  inset: 0;
+  background: var(--screen-black);
+}
+
+.screen__image {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: saturate(1.12) contrast(1.06) brightness(1.02);
+  transition: opacity 240ms ease, filter 240ms ease;
+}
+
+/* ---------- CRT 圖層 ---------- */
+.screen__glow,
+.screen__scanlines,
+.screen__noise,
+.screen__flash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.screen__glow {
+  z-index: 2;
+  background: radial-gradient(75% 65% at 50% 45%, rgba(255, 255, 255, .1), transparent 70%);
+  mix-blend-mode: screen;
+}
+
+.screen__scanlines {
+  z-index: 3;
+  background-image: repeating-linear-gradient(to bottom, rgba(0, 0, 0, .32) 0 1px, rgba(0, 0, 0, 0) 1px 4px);
+  opacity: .55;
+  animation: scan-drift 9s linear infinite;
+}
+
+.screen__noise {
+  z-index: 4;
+  background-image: var(--texture-grain);
+  background-size: 130px 130px;
+  opacity: .09;
+  mix-blend-mode: overlay;
+  animation: static-flicker .6s steps(3) infinite;
+}
+
+.screen__roll {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 5;
+  height: 22%;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, .07), rgba(255, 255, 255, 0));
+  animation: roll-sweep 7.5s linear infinite;
+}
+
+.screen__flash {
+  z-index: 6;
+  opacity: 0;
+  mix-blend-mode: screen;
+  background: radial-gradient(circle at 50% 50%, #fff 0%, #fff 55%, rgba(255, 255, 255, .6) 76%, rgba(255, 255, 255, 0) 100%);
+}
+
+/* 螢幕資訊（OSD） */
+.screen__osd {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: clamp(8px, 2vmin, 26px);
+  font-family: var(--font-osd);
+  color: var(--phosphor);
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  text-shadow: 0 0 10px rgba(150, 255, 140, .55), 0 0 2px rgba(0, 0, 0, .9);
+  pointer-events: none;
+}
+
+.screen__osd-channel {
+  font-size: clamp(12px, 2vmin, 24px);
+  font-weight: 700;
+}
+
+.screen__osd-status {
+  align-self: flex-end;
+  font-size: clamp(9px, 1.35vmin, 15px);
+  opacity: .9;
+}
+
+/* ---------- 轉台雜訊（切換照片時） ---------- */
+.screen.is-tuning .screen__image {
+  opacity: .35;
+  filter: blur(3px) brightness(1.4) saturate(.35) contrast(1.12);
+}
+
+.screen.is-tuning .screen__scanlines {
+  opacity: .85;
+}
+
+.screen.is-tuning .screen__noise {
+  filter: brightness(3.4) contrast(1.2);
+}
+
+.screen.is-tuning .screen__roll {
+  animation-duration: 1.1s;
+}
+
+.screen.is-tuning .screen__osd-status {
+  color: var(--amber);
+}
+
+/* ------------------------------------------------------------
+   5. 開關機動畫
+   關機：clip-path 逐步裁切「可視區」（不動圖片尺寸），
+        影像同步模糊、過曝，最後收成亮線 → 亮點。
+   開機：可視區從頭到尾維持滿版，只讓畫面由模糊全白
+        慢慢還原顏色（saturate 0 → 1）。
+   ------------------------------------------------------------ */
+.tv.is-powering-off .screen__tube {
+  animation: tube-collapse var(--dur-off) cubic-bezier(.45, .05, .35, 1) forwards;
+}
+
+.tv.is-powering-off .screen__contents {
+  animation: tube-fade-out var(--dur-off) ease-in forwards;
+}
+
+.tv.is-powering-off .screen__flash {
+  animation: flash-off var(--dur-off) ease-out forwards;
+}
+
+.tv.is-powering-off .screen__image {
+  transition: none;
+}
+
+.tv.is-powering-on .screen__contents {
+  animation: tube-warm-up var(--dur-on) ease-out forwards;
+}
+
+.tv.is-powering-on .screen__flash {
+  animation: flash-on var(--dur-on) ease-out forwards;
+}
+
+.tv.is-powering-on .screen__noise {
+  animation: static-burst var(--dur-on) steps(4) forwards;
+}
+
+/* 關機完成：只剩玻璃反光的黑畫面 */
+.tv.is-power-off .screen__contents {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.tv.is-power-off .screen__scanlines,
+.tv.is-power-off .screen__noise,
+.tv.is-power-off .screen__roll {
+  animation-play-state: paused;
+}
+
+@keyframes tube-collapse {
+  0% {
+    clip-path: inset(0 0 0 0 round 24px);
+  }
+  38% {
+    clip-path: inset(45.5% 0 45.5% 0);
+  }
+  52% {
+    clip-path: inset(49.1% 0 49.1% 0);
+  }
+  58% {
+    clip-path: inset(49.35% 0 49.35% 0);
+  }
+  84% {
+    clip-path: inset(49.5% 47.5% 49.5% 47.5%);
+  }
+  92% {
+    clip-path: inset(49.6% 49.4% 49.6% 49.4%);
+  }
+  100% {
+    clip-path: inset(50% 50% 50% 50%);
+  }
+}
+
+@keyframes tube-fade-out {
+  0% {
+    filter: blur(0) brightness(1) saturate(1);
+    opacity: 1;
+  }
+  16% {
+    filter: blur(.6px) brightness(1.7) saturate(.85);
+  }
+  38% {
+    filter: blur(3px) brightness(2.5) saturate(.45);
+  }
+  58% {
+    filter: blur(5px) brightness(3.1) saturate(.15);
+  }
+  84% {
+    filter: blur(7px) brightness(3.5) saturate(0);
+    opacity: .85;
+  }
+  100% {
+    filter: blur(9px) brightness(3.6) saturate(0);
+    opacity: .65;
+  }
+}
+
+@keyframes flash-off {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: .18;
+  }
+  40% {
+    opacity: .45;
+  }
+  62% {
+    opacity: .85;
+  }
+  88% {
+    opacity: .55;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes tube-warm-up {
+  0% {
+    filter: blur(20px) brightness(4.4) saturate(0) contrast(.35);
+    opacity: 1;
+  }
+  8% {
+    filter: blur(18px) brightness(4.6) saturate(0) contrast(.35);
+  }
+  34% {
+    filter: blur(12px) brightness(3) saturate(.05) contrast(.5);
+  }
+  58% {
+    filter: blur(7px) brightness(2.1) saturate(.28) contrast(.72);
+  }
+  78% {
+    filter: blur(3px) brightness(1.45) saturate(.62) contrast(.9);
+  }
+  92% {
+    filter: blur(1px) brightness(1.1) saturate(.9) contrast(.98);
+  }
+  100% {
+    filter: blur(0) brightness(1) saturate(1) contrast(1);
+    opacity: 1;
+  }
+}
+
+@keyframes flash-on {
+  0% {
+    opacity: 1;
+  }
+  18% {
+    opacity: .92;
+  }
+  42% {
+    opacity: .58;
+  }
+  70% {
+    opacity: .2;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes static-burst {
+  0% {
+    opacity: .55;
+  }
+  35% {
+    opacity: .3;
+  }
+  70% {
+    opacity: .14;
+  }
+  100% {
+    opacity: .09;
+  }
+}
+
+@keyframes scan-drift {
+  from {
+    background-position-y: 0;
+  }
+  to {
+    background-position-y: 8px;
+  }
+}
+
+@keyframes static-flicker {
+  0% {
+    background-position: 0 0;
+    opacity: .07;
+  }
+  33% {
+    background-position: -18px 11px;
+    opacity: .12;
+  }
+  66% {
+    background-position: 12px -9px;
+    opacity: .08;
+  }
+  100% {
+    background-position: 0 0;
+    opacity: .1;
+  }
+}
+
+@keyframes roll-sweep {
+  0% {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(560%);
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------
+   6. 控制面板：電源、指示燈、旋鈕、換台鍵
+   ------------------------------------------------------------ */
+.tv__panel {
+  flex: 0 0 clamp(92px, 12vw, 186px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: clamp(8px, 1.6vmin, 18px);
+  padding: clamp(4px, 1vmin, 10px) 0;
+}
+
+.panel__group {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: clamp(6px, 1.2vmin, 12px);
+}
+
+.panel__group--knobs {
+  align-items: center;
+}
+
+/* 仿實體按鍵（奶油色塑膠 + 鉛筆描邊 + 厚陰影） */
+.key {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5em;
+  padding: clamp(9px, 1.5vmin, 16px) clamp(8px, 1.4vmin, 16px);
+  border: 3px solid var(--ink);
+  border-radius: var(--radius-hand);
+  background-image: linear-gradient(180deg, #fff5e0 0%, #f0d6ab 55%, #dcb884 100%);
+  color: var(--ink);
+  font-family: var(--font-hardware);
+  font-size: clamp(10px, 1.35vmin, 15px);
+  letter-spacing: .08em;
+  box-shadow:
+    0 5px 0 #7c4c2c,
+    0 9px 14px rgba(43, 26, 18, .4),
+    inset 0 2px 0 rgba(255, 255, 255, .75);
+  transform: rotate(-.8deg);
+  transition: transform 120ms var(--ease-crt), box-shadow 120ms var(--ease-crt), filter 160ms ease;
+}
+
+.key:hover:not(:disabled) {
+  filter: brightness(1.05);
+  transform: rotate(-.8deg) translateY(-1px);
+}
+
+.key:active:not(:disabled) {
+  transform: rotate(-.8deg) translateY(4px);
+  box-shadow:
+    0 1px 0 #7c4c2c,
+    0 3px 6px rgba(43, 26, 18, .45),
+    inset 0 2px 0 rgba(255, 255, 255, .6);
+}
+
+.key:disabled {
+  opacity: .5;
+  filter: grayscale(.5) brightness(.85);
+  transform: rotate(-.8deg) translateY(3px);
+  box-shadow:
+    0 2px 0 #7c4c2c,
+    0 3px 8px rgba(43, 26, 18, .3);
+}
+
+.key--power {
+  background-image: linear-gradient(180deg, #ffd9c8 0%, #f0a58c 55%, #d4735a 100%);
+}
+
+/* 電源符號（圓環留缺口 + 上方直線） */
+.key__icon {
+  position: relative;
+  width: 1.15em;
+  height: 1.15em;
+  border: 3px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+}
+
+.key__icon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -.34em;
+  width: 3px;
+  height: .62em;
+  margin-left: -1.5px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.key--chan .key__arrow {
+  font-family: var(--font-osd);
+  font-size: 1.05em;
+  line-height: 1;
+}
+
+.key__text {
+  font-family: var(--font-doodle);
+  font-weight: 700;
+  letter-spacing: .12em;
+  white-space: nowrap;
+}
+
+/* 電源指示燈 */
+.deck__led {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5em;
+  font-family: var(--font-osd);
+  font-size: clamp(7px, .95vmin, 11px);
+  letter-spacing: .3em;
+  color: rgba(255, 238, 205, .55);
+}
+
+.deck__led-dot {
+  width: clamp(7px, 1vmin, 11px);
+  aspect-ratio: 1;
+  border: 2px solid rgba(43, 26, 18, .8);
+  border-radius: 50%;
+  background: #4a1a14;
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, .8);
+  transition: background 220ms ease, box-shadow 220ms ease;
+}
+
+.deck__led[data-state="on"] .deck__led-dot {
+  background: #ff3b26;
+  box-shadow: 0 0 10px #ff5a3c, 0 0 22px rgba(255, 90, 60, .7);
+}
+
+.deck__led[data-state="on"] .deck__led-text {
+  color: rgba(255, 238, 205, .95);
+}
+
+/* 旋鈕（裝飾用） */
+.knobs {
+  display: flex;
+  justify-content: space-around;
+  gap: clamp(6px, 1.4vmin, 16px);
+  width: 100%;
+}
+
+.knob {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .4em;
+}
+
+.knob__cap {
+  position: relative;
+  width: clamp(26px, 4.4vmin, 54px);
+  aspect-ratio: 1;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background-image: radial-gradient(circle at 34% 28%, #fff1d6 0 10%, #e3bd8f 42%, #a9764a 78%, #6d4526 100%);
+  box-shadow: inset 0 -5px 9px rgba(43, 26, 18, .45), 0 3px 0 rgba(43, 26, 18, .55);
+  transform: rotate(var(--knob-turn, -18deg));
+}
+
+.knob__cap::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 9%;
+  width: 3px;
+  height: 32%;
+  margin-left: -1.5px;
+  border-radius: 2px;
+  background: var(--ink);
+}
+
+.knob:nth-child(2) .knob__cap {
+  --knob-turn: 64deg;
+}
+
+.knob__label {
+  font-family: var(--font-osd);
+  font-size: clamp(6px, .85vmin, 10px);
+  letter-spacing: .16em;
+  color: rgba(255, 238, 205, .7);
+}
+
+/* ------------------------------------------------------------
+   7. 響應式：窄螢幕／直向把面板改成底部橫排
+   ------------------------------------------------------------ */
+@media (max-width: 900px), (orientation: portrait) {
+  .tv__side {
+    display: none;
+  }
+
+  .tv__body {
+    flex-direction: column;
+  }
+
+  .tv__panel {
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(6px, 1.6vw, 14px);
+    padding: 0;
+  }
+
+  .panel__group--knobs {
+    display: none;
+  }
+
+  .panel__group--power {
+    flex: 0 0 auto;
+  }
+
+  .panel__group--channel {
+    flex: 1 1 auto;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .tv__brand-sub {
+    display: none;
+  }
+
+  .tv__footer {
+    letter-spacing: .1em;
+  }
+}
+
+@media (max-width: 620px) {
+  .tv__sticker {
+    display: none;
+  }
+
+  .key {
+    flex: 0 1 auto;
+    border-width: 2px;
+    padding: 10px 12px;
+  }
+
+  .tv__hint {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tv__serial {
+    display: none;
+  }
+}
+
+/* 矮螢幕（例如橫放手機）只保留必要元素 */
+@media (max-height: 560px) {
+  .tv__footer,
+  .tv__sticker {
+    display: none;
+  }
+
+  .tv__brand-sub {
+    display: none;
+  }
+
+  .tv__cabinet {
+    gap: 6px;
+    padding-block: 10px;
+  }
+}
